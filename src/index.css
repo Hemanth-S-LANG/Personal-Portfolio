@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-dark: #07080c;
+    --bg-card: rgba(13, 16, 26, 0.7);
+    --border-glow: rgba(56, 189, 248, 0.15);
+    --accent-sky: #38bdf8;
+    --accent-purple: #a855f7;
+    --accent-emerald: #34d399;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-dark);
+    color: #e2e8f0;
+    overflow-x: hidden;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: #07080c;
+    color: #f1f5f9;
+    overflow-x: hidden;
+    selection-background-color: rgba(56, 189, 248, 0.25);
+    selection-color: #ffffff;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #07080c;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(56, 189, 248, 0.4);
+}
+
+/* Glassmorphism utilities */
+.glass-panel {
+  background: rgba(13, 16, 26, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+}
+
+.glass-panel-interactive {
+  background: rgba(14, 18, 30, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel-interactive:hover {
+  background: rgba(20, 26, 44, 0.85);
+  border-color: rgba(56, 189, 248, 0.35);
+  box-shadow: 0 12px 40px -10px rgba(56, 189, 248, 0.12);
+  transform: translateY(-2px);
+}
+
+.text-gradient-cyan {
+  background: linear-gradient(135deg, #ffffff 0%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.font-mono-code {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Infinite Marquee Track Animations for Moving Tech Flash Cards */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-33.333%); }
+}
+
+@keyframes marquee-reverse {
+  0% { transform: translateX(-33.333%); }
+  100% { transform: translateX(0%); }
+}
+
+.animate-marquee {
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee-reverse {
+  animation: marquee-reverse 25s linear infinite;
+}
