@@ -24,6 +24,14 @@ export const ProjectCanvas: React.FC<ProjectCanvasProps> = ({ projectId }) => {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(container.clientWidth, container.clientHeight);
 
+    // Track visibility — pause RAF when card is off-screen to save GPU on mobile
+    let isVisible = false;
+    const observer = new IntersectionObserver(
+      ([entry]) => { isVisible = entry.isIntersecting; },
+      { threshold: 0.1 }
+    );
+    observer.observe(container);
+
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 50);
     camera.position.z = 4;
@@ -144,6 +152,8 @@ export const ProjectCanvas: React.FC<ProjectCanvasProps> = ({ projectId }) => {
 
     const animate = () => {
       animId = requestAnimationFrame(animate);
+      // Skip rendering when card is off-screen — saves GPU cycles on mobile
+      if (!isVisible) return;
       const t = clock.getElapsedTime();
       group.rotation.y = t * 0.4;
       group.rotation.x = Math.sin(t * 0.2) * 0.2;
@@ -165,6 +175,7 @@ export const ProjectCanvas: React.FC<ProjectCanvasProps> = ({ projectId }) => {
 
     return () => {
       cancelAnimationFrame(animId);
+      observer.disconnect();
       window.removeEventListener('resize', handleResize);
       renderer.dispose();
     };

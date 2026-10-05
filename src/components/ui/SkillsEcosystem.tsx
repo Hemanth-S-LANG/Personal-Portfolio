@@ -61,6 +61,19 @@ export const SkillsEcosystem: React.FC = () => {
     setHighlightedProjectIds([]);
   };
 
+  // On touch devices: tap to select, tap the same card again (or tap elsewhere) to dismiss
+  const handleTouchSkill = (e: React.TouchEvent, skillName: string, projectIds: string[]) => {
+    e.preventDefault(); // prevent the subsequent synthetic click from firing
+    if (hoveredSkill === skillName) {
+      // Second tap on the same card — deselect
+      setHoveredSkill(null);
+      setHighlightedProjectIds([]);
+    } else {
+      setHoveredSkill(skillName);
+      setHighlightedProjectIds(projectIds);
+    }
+  };
+
   return (
     <section id="skills" className="relative py-16 sm:py-24 px-3.5 sm:px-4 max-w-6xl mx-auto">
       {/* Background Ambient Glow */}
@@ -123,7 +136,7 @@ export const SkillsEcosystem: React.FC = () => {
                     onMouseEnter={() => handleMouseEnterSkill(card.name, card.projectsUsed)}
                     onMouseLeave={handleMouseLeaveSkill}
                     onClick={() => handleMouseEnterSkill(card.name, card.projectsUsed)}
-                    onTouchStart={() => handleMouseEnterSkill(card.name, card.projectsUsed)}
+                    onTouchStart={(e) => handleTouchSkill(e, card.name, card.projectsUsed)}
                     className={`flex items-center gap-2 sm:gap-2.5 px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl border text-xs sm:text-sm font-medium font-mono-code transition-all duration-200 shadow-md active:scale-95 ${
                       isHovered
                         ? 'bg-sky-500 text-slate-950 font-extrabold border-sky-400 scale-105 shadow-[0_0_20px_rgba(56,189,248,0.4)]'
@@ -154,7 +167,7 @@ export const SkillsEcosystem: React.FC = () => {
                     onMouseEnter={() => handleMouseEnterSkill(card.name, card.projectsUsed)}
                     onMouseLeave={handleMouseLeaveSkill}
                     onClick={() => handleMouseEnterSkill(card.name, card.projectsUsed)}
-                    onTouchStart={() => handleMouseEnterSkill(card.name, card.projectsUsed)}
+                    onTouchStart={(e) => handleTouchSkill(e, card.name, card.projectsUsed)}
                     className={`flex items-center gap-2 sm:gap-2.5 px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl border text-xs sm:text-sm font-medium font-mono-code transition-all duration-200 shadow-md active:scale-95 ${
                       isHovered
                         ? 'bg-purple-500 text-slate-950 font-extrabold border-purple-400 scale-105 shadow-[0_0_20px_rgba(168,85,247,0.4)]'
@@ -197,7 +210,7 @@ export const SkillsEcosystem: React.FC = () => {
                       onMouseEnter={() => handleMouseEnterSkill(skill.name, skill.projectsUsed)}
                       onMouseLeave={handleMouseLeaveSkill}
                       onClick={() => handleMouseEnterSkill(skill.name, skill.projectsUsed)}
-                      onTouchStart={() => handleMouseEnterSkill(skill.name, skill.projectsUsed)}
+                      onTouchStart={(e) => handleTouchSkill(e, skill.name, skill.projectsUsed)}
                       className={`px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-mono-code border transition-all active:scale-95 ${
                         isHovered
                           ? 'bg-sky-500 text-slate-950 font-extrabold border-sky-400 scale-105'

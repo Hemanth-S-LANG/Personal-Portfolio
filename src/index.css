@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* Custom breakpoints — xs fills the gap between base (0px) and sm (640px) */
+@theme {
+  --breakpoint-xs: 475px;
+}
+
 @layer base {
   :root {
     --bg-dark: #07080c;

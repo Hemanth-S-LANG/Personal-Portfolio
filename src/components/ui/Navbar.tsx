@@ -69,7 +69,7 @@ export const Navbar: React.FC = () => {
         </button>
 
         {/* Desktop Navigation Pill */}
-        <nav className="hidden md:flex items-center gap-1 p-1.5 rounded-full glass-panel border-white/10 shadow-2xl">
+        <nav className="hidden sm:flex items-center gap-1 p-1.5 rounded-full glass-panel border-white/10 shadow-2xl">
           {NAV_ITEMS.map((item) => {
             const isActive = activeSection === item.id;
             return (
@@ -93,8 +93,8 @@ export const Navbar: React.FC = () => {
           })}
         </nav>
 
-        {/* Action Buttons */}
-        <div className="hidden sm:flex items-center gap-2.5">
+        {/* Action Buttons — visible on desktop alongside the nav pill */}
+        <div className="hidden md:flex items-center gap-2.5">
           <a
             href={PERSONAL_INFO.github}
             target="_blank"
@@ -128,7 +128,7 @@ export const Navbar: React.FC = () => {
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle navigation menu"
-          className="md:hidden p-2.5 rounded-full glass-panel border-white/10 text-slate-200 hover:text-cyan-400 active:scale-95 transition-all"
+          className="sm:hidden p-2.5 rounded-full glass-panel border-white/10 text-slate-200 hover:text-cyan-400 active:scale-95 transition-all"
         >
           {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
@@ -144,7 +144,7 @@ export const Navbar: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileMenuOpen(false)}
-              className="fixed inset-0 bg-black/70 backdrop-blur-md z-40 md:hidden"
+              className="fixed inset-0 bg-black/70 backdrop-blur-md z-40 sm:hidden"
             />
 
             {/* Floating Drawer Container */}
@@ -153,7 +153,7 @@ export const Navbar: React.FC = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -20, scale: 0.96 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="relative z-50 md:hidden mt-3 max-w-6xl mx-auto rounded-3xl glass-panel p-5 border-white/15 shadow-2xl flex flex-col gap-4 bg-[#090c19]/95"
+              className="relative z-50 sm:hidden mt-3 max-w-6xl mx-auto rounded-3xl glass-panel p-5 border-white/15 shadow-2xl flex flex-col gap-4 bg-[#090c19]/95"
             >
               <div className="flex items-center justify-between border-b border-white/10 pb-3">
                 <span className="text-xs font-mono-code text-cyan-400 font-bold uppercase tracking-wider">
