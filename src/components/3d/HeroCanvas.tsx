@@ -1,37 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-
-const isWebGLSupported = (): boolean => {
-  try {
-    const canvas = document.createElement('canvas');
-    return !!(
-      window.WebGLRenderingContext &&
-      (canvas.getContext('webgl2') || canvas.getContext('webgl'))
-    );
-  } catch {
-    return false;
-  }
-};
 
 export const HeroCanvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [webGlAvailable, setWebGlAvailable] = useState<boolean>(true);
 
   useEffect(() => {
-    if (!isWebGLSupported()) {
-      setWebGlAvailable(false);
-      return;
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!webGlAvailable || !canvasRef.current || !containerRef.current) return;
+    if (!canvasRef.current || !containerRef.current) return;
 
     const container = containerRef.current;
     const canvas = canvasRef.current;
 
-    let renderer: THREE.WebGLRenderer | null = null;
+    let renderer: THREE.WebGLRenderer;
     try {
       renderer = new THREE.WebGLRenderer({
         canvas,
@@ -40,16 +20,8 @@ export const HeroCanvas: React.FC = () => {
         powerPreference: 'high-performance'
       });
     } catch {
-      setWebGlAvailable(false);
       return;
     }
-
-    const handleContextLost = (e: Event) => {
-      e.preventDefault();
-      setWebGlAvailable(false);
-    };
-
-    canvas.addEventListener('webglcontextlost', handleContextLost, false);
 
     const dpr = Math.min(window.devicePixelRatio, 2);
     renderer.setPixelRatio(dpr);
@@ -67,9 +39,12 @@ export const HeroCanvas: React.FC = () => {
     const group = new THREE.Group();
     scene.add(group);
 
+    // Responsive particle count: smooth 60fps across laptop & phone
+    const isMobile = window.innerWidth < 768;
+    const particleCount = isMobile ? 1400 : 2400;
+
     // --- 1. CORE PARTICLES SPHERE ---
     const sphereRadius = 2.0;
-    const particleCount = 2400;
     const spherePositions = new Float32Array(particleCount * 3);
     const sphereColors = new Float32Array(particleCount * 3);
     const sphereSizes = new Float32Array(particleCount);
@@ -196,13 +171,13 @@ export const HeroCanvas: React.FC = () => {
       return ringPoints;
     };
 
-    const ring1 = createRing(2.8, 400, Math.PI / 4, 0, '#00F0FF');
-    const ring2 = createRing(3.4, 600, -Math.PI / 3, Math.PI / 6, '#7A3CFF');
+    const ring1 = createRing(2.8, isMobile ? 300 : 400, Math.PI / 4, 0, '#00F0FF');
+    const ring2 = createRing(3.4, isMobile ? 400 : 600, -Math.PI / 3, Math.PI / 6, '#7A3CFF');
     group.add(ring1);
     group.add(ring2);
 
     // --- 3. BACKGROUND PARTICLES ---
-    const bgCount = 500;
+    const bgCount = isMobile ? 300 : 500;
     const bgGeo = new THREE.BufferGeometry();
     const bgPos = new Float32Array(bgCount * 3);
     for (let i = 0; i < bgCount * 3; i += 3) {
@@ -246,7 +221,7 @@ export const HeroCanvas: React.FC = () => {
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
 
     const handleResize = () => {
-      if (!containerRef.current || !renderer) return;
+      if (!containerRef.current) return;
       const width = containerRef.current.clientWidth;
       const height = containerRef.current.clientHeight;
       camera.aspect = width / height;
@@ -279,32 +254,22 @@ export const HeroCanvas: React.FC = () => {
 
       bgPoints.rotation.y = elapsedTime * 0.02;
 
-      renderer?.render(scene, camera);
+      renderer.render(scene, camera);
     };
 
     animate();
 
     return () => {
       cancelAnimationFrame(animationFrameId);
-      canvas.removeEventListener('webglcontextlost', handleContextLost);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('touchstart', handleTouchMove);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('resize', handleResize);
-      renderer?.dispose();
+      renderer.dispose();
       sphereGeometry.dispose();
       sphereMaterial.dispose();
     };
-  }, [webGlAvailable]);
-
-  if (!webGlAvailable) {
-    return (
-      <div className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden bg-[#040508]">
-        {/* Ambient Gradient Mesh for Non-WebGL / Mobile */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[600px] h-[350px] sm:h-[600px] bg-gradient-to-tr from-cyan-500/20 via-purple-500/15 to-transparent rounded-full blur-[100px] sm:blur-[140px] animate-pulse" />
-      </div>
-    );
-  }
+  }, []);
 
   return (
     <div ref={containerRef} className="absolute inset-0 w-full h-full pointer-events-none z-0">
@@ -312,4 +277,5 @@ export const HeroCanvas: React.FC = () => {
     </div>
   );
 };
+
 
