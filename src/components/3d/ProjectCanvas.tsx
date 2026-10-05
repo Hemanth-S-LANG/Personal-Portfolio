@@ -1,33 +1,64 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
+import { Shield, BookOpen, FileText, ShoppingCart, Grid, Bot, Cpu } from 'lucide-react';
 
 interface ProjectCanvasProps {
   projectId: string;
 }
 
+const isWebGLSupported = (): boolean => {
+  try {
+    const canvas = document.createElement('canvas');
+    return !!(
+      window.WebGLRenderingContext &&
+      (canvas.getContext('webgl2') || canvas.getContext('webgl'))
+    );
+  } catch {
+    return false;
+  }
+};
+
 export const ProjectCanvas: React.FC<ProjectCanvasProps> = ({ projectId }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [webGlAvailable, setWebGlAvailable] = useState<boolean>(true);
+
+  // Check on mount if device is mobile or WebGL is not supported
+  useEffect(() => {
+    const isMobileDevice = window.innerWidth < 768 || 'ontouchstart' in window;
+    if (isMobileDevice || !isWebGLSupported()) {
+      setWebGlAvailable(false);
+    }
+  }, []);
 
   useEffect(() => {
-    if (!canvasRef.current || !containerRef.current) return;
+    if (!webGlAvailable || !canvasRef.current || !containerRef.current) return;
     const container = containerRef.current;
     const canvas = canvasRef.current;
 
-    let renderer: THREE.WebGLRenderer;
+    let renderer: THREE.WebGLRenderer | null = null;
     try {
       renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     } catch {
+      setWebGlAvailable(false);
       return;
     }
+
+    const handleContextLost = (e: Event) => {
+      e.preventDefault();
+      setWebGlAvailable(false);
+    };
+
+    canvas.addEventListener('webglcontextlost', handleContextLost, false);
 
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(container.clientWidth, container.clientHeight);
 
-    // Track visibility — pause RAF when card is off-screen to save GPU on mobile
     let isVisible = false;
     const observer = new IntersectionObserver(
-      ([entry]) => { isVisible = entry.isIntersecting; },
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+      },
       { threshold: 0.1 }
     );
     observer.observe(container);
@@ -39,7 +70,7 @@ export const ProjectCanvas: React.FC<ProjectCanvasProps> = ({ projectId }) => {
     const group = new THREE.Group();
     scene.add(group);
 
-    // Create 3D visuals based on Project ID
+    // Create 3D visual geometries
     if (projectId === 'cognitest') {
       const nodeCount = 30;
       const geo = new THREE.BufferGeometry();
@@ -70,7 +101,6 @@ export const ProjectCanvas: React.FC<ProjectCanvasProps> = ({ projectId }) => {
       const shield = new THREE.Mesh(sphereGeo, sphereMat);
       group.add(shield);
     } else if (projectId === 'lms') {
-      // 3D Graduation Cap / Course Nodes Mesh
       const capTopGeo = new THREE.BoxGeometry(1.6, 0.08, 1.6);
       const capTopMat = new THREE.MeshBasicMaterial({ color: 0x34d399, wireframe: true, transparent: true, opacity: 0.7 });
       const capTop = new THREE.Mesh(capTopGeo, capTopMat);
@@ -98,7 +128,6 @@ export const ProjectCanvas: React.FC<ProjectCanvasProps> = ({ projectId }) => {
       }
       group.add(stackGroup);
     } else if (projectId === 'amazon-clone') {
-      // 3D E-Commerce Shopping Grid Box
       const cartGeo = new THREE.BoxGeometry(1.2, 1.2, 1.2);
       const cartMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b, wireframe: true, transparent: true, opacity: 0.6 });
       const cartMesh = new THREE.Mesh(cartGeo, cartMat);
@@ -152,18 +181,17 @@ export const ProjectCanvas: React.FC<ProjectCanvasProps> = ({ projectId }) => {
 
     const animate = () => {
       animId = requestAnimationFrame(animate);
-      // Skip rendering when card is off-screen — saves GPU cycles on mobile
       if (!isVisible) return;
       const t = clock.getElapsedTime();
       group.rotation.y = t * 0.4;
       group.rotation.x = Math.sin(t * 0.2) * 0.2;
-      renderer.render(scene, camera);
+      renderer?.render(scene, camera);
     };
 
     animate();
 
     const handleResize = () => {
-      if (!containerRef.current) return;
+      if (!containerRef.current || !renderer) return;
       const w = containerRef.current.clientWidth;
       const h = containerRef.current.clientHeight;
       camera.aspect = w / h;
@@ -176,10 +204,67 @@ export const ProjectCanvas: React.FC<ProjectCanvasProps> = ({ projectId }) => {
     return () => {
       cancelAnimationFrame(animId);
       observer.disconnect();
+      canvas.removeEventListener('webglcontextlost', handleContextLost);
       window.removeEventListener('resize', handleResize);
-      renderer.dispose();
+      renderer?.dispose();
     };
-  }, [projectId]);
+  }, [projectId, webGlAvailable]);
+
+  // Fallback visual cards for mobile screens & when WebGL is unavailable
+  if (!webGlAvailable) {
+    return (
+      <div className="w-full h-full min-h-[160px] xs:min-h-[180px] relative rounded-2xl overflow-hidden bg-slate-950/80 border border-white/10 p-5 flex flex-col justify-between group-hover:border-cyan-500/40 transition-colors">
+        {/* Ambient Gradient Glow Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-purple-500/5 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:1.5rem_1.5rem] pointer-events-none" />
+
+        {/* Card Content & Icon Header */}
+        <div className="relative z-10 flex items-center justify-between">
+          <div className="p-3 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
+            {projectId === 'cognitest' && <Shield className="w-6 h-6 text-cyan-400" />}
+            {projectId === 'lms' && <BookOpen className="w-6 h-6 text-emerald-400" />}
+            {projectId === 'my-notes-hub' && <FileText className="w-6 h-6 text-purple-400" />}
+            {projectId === 'amazon-clone' && <ShoppingCart className="w-6 h-6 text-amber-400" />}
+            {projectId === 'pixel-frame' && <Grid className="w-6 h-6 text-sky-400" />}
+            {projectId === 'multi-agent-ai' && <Bot className="w-6 h-6 text-purple-400" />}
+            {!['cognitest', 'lms', 'my-notes-hub', 'amazon-clone', 'pixel-frame', 'multi-agent-ai'].includes(projectId) && (
+              <Cpu className="w-6 h-6 text-cyan-400" />
+            )}
+          </div>
+
+          <span className="text-[10px] font-mono-code px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-slate-300">
+            {projectId === 'cognitest' && 'Egress SSRF Guard • ARQ Workers'}
+            {projectId === 'lms' && 'Role Auth • Anti-Cheat Quizzes'}
+            {projectId === 'my-notes-hub' && 'Block Editor • React 19'}
+            {projectId === 'amazon-clone' && 'E-Commerce Microservice'}
+            {projectId === 'pixel-frame' && 'Pixel Art Studio Grid'}
+            {projectId === 'multi-agent-ai' && 'LangGraph Multi-Agent Cluster'}
+            {!['cognitest', 'lms', 'my-notes-hub', 'amazon-clone', 'pixel-frame', 'multi-agent-ai'].includes(projectId) && 'Engineered Project'}
+          </span>
+        </div>
+
+        {/* Visual Graphic Representation */}
+        <div className="relative z-10 mt-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            <span className="text-xs font-mono-code text-slate-300 font-semibold">
+              {projectId === 'cognitest' && 'FastAPI + Redis + SSE'}
+              {projectId === 'lms' && 'MERN Stack + Mongoose'}
+              {projectId === 'my-notes-hub' && 'PostgreSQL + dnd-kit'}
+              {projectId === 'amazon-clone' && 'React + Stripe'}
+              {projectId === 'pixel-frame' && 'TypeScript + Canvas'}
+              {projectId === 'multi-agent-ai' && 'FastAPI + LangChain'}
+              {!['cognitest', 'lms', 'my-notes-hub', 'amazon-clone', 'pixel-frame', 'multi-agent-ai'].includes(projectId) && 'Full-Stack Architecture'}
+            </span>
+          </div>
+
+          <div className="text-[10px] font-mono-code text-slate-400">
+            Active System
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div ref={containerRef} className="w-full h-full min-h-[180px] relative rounded-2xl overflow-hidden bg-black/40">
@@ -187,3 +272,4 @@ export const ProjectCanvas: React.FC<ProjectCanvasProps> = ({ projectId }) => {
     </div>
   );
 };
+

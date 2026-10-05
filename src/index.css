@@ -8,8 +8,9 @@
 
 @layer base {
   :root {
-    --bg-dark: #07080c;
-    --bg-card: rgba(13, 16, 26, 0.7);
+    color-scheme: dark;
+    --bg-dark: #040508;
+    --bg-card: rgba(13, 16, 26, 0.75);
     --border-glow: rgba(56, 189, 248, 0.15);
     --accent-sky: #38bdf8;
     --accent-purple: #a855f7;
@@ -17,22 +18,29 @@
   }
 
   html {
+    color-scheme: dark;
     scroll-behavior: smooth;
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-    background-color: var(--bg-dark);
+    background-color: #040508 !important;
     color: #e2e8f0;
     overflow-x: hidden;
     -webkit-tap-highlight-color: transparent;
   }
 
   body {
+    color-scheme: dark;
     margin: 0;
     padding: 0;
-    background: #07080c;
+    background-color: #040508 !important;
     color: #f1f5f9;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  canvas {
+    background: transparent !important;
+    color-scheme: dark;
   }
 
   ::selection {

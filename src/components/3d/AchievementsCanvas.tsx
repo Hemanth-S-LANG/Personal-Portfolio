@@ -1,21 +1,48 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
+
+const isWebGLSupported = (): boolean => {
+  try {
+    const canvas = document.createElement('canvas');
+    return !!(
+      window.WebGLRenderingContext &&
+      (canvas.getContext('webgl2') || canvas.getContext('webgl'))
+    );
+  } catch {
+    return false;
+  }
+};
 
 export const AchievementsCanvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [webGlAvailable, setWebGlAvailable] = useState<boolean>(true);
 
   useEffect(() => {
-    if (!canvasRef.current || !containerRef.current) return;
+    if (!isWebGLSupported()) {
+      setWebGlAvailable(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!webGlAvailable || !canvasRef.current || !containerRef.current) return;
     const container = containerRef.current;
     const canvas = canvasRef.current;
 
-    let renderer: THREE.WebGLRenderer;
+    let renderer: THREE.WebGLRenderer | null = null;
     try {
       renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     } catch {
+      setWebGlAvailable(false);
       return;
     }
+
+    const handleContextLost = (e: Event) => {
+      e.preventDefault();
+      setWebGlAvailable(false);
+    };
+
+    canvas.addEventListener('webglcontextlost', handleContextLost, false);
 
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(container.clientWidth, container.clientHeight);
@@ -80,7 +107,7 @@ export const AchievementsCanvas: React.FC = () => {
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
 
     const handleResize = () => {
-      if (!containerRef.current) return;
+      if (!containerRef.current || !renderer) return;
       const w = containerRef.current.clientWidth;
       const h = containerRef.current.clientHeight;
       camera.aspect = w / h;
@@ -106,22 +133,33 @@ export const AchievementsCanvas: React.FC = () => {
       innerMesh.rotation.y = -t * 0.6;
       ring.rotation.z = t * 0.2;
 
-      renderer.render(scene, camera);
+      renderer?.render(scene, camera);
     };
 
     animate();
 
     return () => {
       cancelAnimationFrame(animId);
+      canvas.removeEventListener('webglcontextlost', handleContextLost);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('touchstart', handleTouchMove);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('resize', handleResize);
-      renderer.dispose();
+      renderer?.dispose();
       icoGeo.dispose();
       icoMat.dispose();
     };
-  }, []);
+  }, [webGlAvailable]);
+
+  if (!webGlAvailable) {
+    return (
+      <div className="w-full h-full min-h-[120px] relative rounded-2xl overflow-hidden bg-gradient-to-br from-amber-500/10 via-sky-500/5 to-transparent border border-amber-500/20 flex items-center justify-center p-3">
+        <div className="w-12 h-12 rounded-full bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-lg animate-pulse">
+          🏆
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div ref={containerRef} className="w-full h-full min-h-[220px] relative pointer-events-none z-0">
@@ -129,3 +167,4 @@ export const AchievementsCanvas: React.FC = () => {
     </div>
   );
 };
+

@@ -1,17 +1,37 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
+
+const isWebGLSupported = (): boolean => {
+  try {
+    const canvas = document.createElement('canvas');
+    return !!(
+      window.WebGLRenderingContext &&
+      (canvas.getContext('webgl2') || canvas.getContext('webgl'))
+    );
+  } catch {
+    return false;
+  }
+};
 
 export const HeroCanvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [webGlAvailable, setWebGlAvailable] = useState<boolean>(true);
 
   useEffect(() => {
-    if (!canvasRef.current || !containerRef.current) return;
+    if (!isWebGLSupported()) {
+      setWebGlAvailable(false);
+      return;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!webGlAvailable || !canvasRef.current || !containerRef.current) return;
 
     const container = containerRef.current;
     const canvas = canvasRef.current;
 
-    let renderer: THREE.WebGLRenderer;
+    let renderer: THREE.WebGLRenderer | null = null;
     try {
       renderer = new THREE.WebGLRenderer({
         canvas,
@@ -20,8 +40,16 @@ export const HeroCanvas: React.FC = () => {
         powerPreference: 'high-performance'
       });
     } catch {
+      setWebGlAvailable(false);
       return;
     }
+
+    const handleContextLost = (e: Event) => {
+      e.preventDefault();
+      setWebGlAvailable(false);
+    };
+
+    canvas.addEventListener('webglcontextlost', handleContextLost, false);
 
     const dpr = Math.min(window.devicePixelRatio, 2);
     renderer.setPixelRatio(dpr);
@@ -218,7 +246,7 @@ export const HeroCanvas: React.FC = () => {
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
 
     const handleResize = () => {
-      if (!containerRef.current) return;
+      if (!containerRef.current || !renderer) return;
       const width = containerRef.current.clientWidth;
       const height = containerRef.current.clientHeight;
       camera.aspect = width / height;
@@ -251,22 +279,32 @@ export const HeroCanvas: React.FC = () => {
 
       bgPoints.rotation.y = elapsedTime * 0.02;
 
-      renderer.render(scene, camera);
+      renderer?.render(scene, camera);
     };
 
     animate();
 
     return () => {
       cancelAnimationFrame(animationFrameId);
+      canvas.removeEventListener('webglcontextlost', handleContextLost);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('touchstart', handleTouchMove);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('resize', handleResize);
-      renderer.dispose();
+      renderer?.dispose();
       sphereGeometry.dispose();
       sphereMaterial.dispose();
     };
-  }, []);
+  }, [webGlAvailable]);
+
+  if (!webGlAvailable) {
+    return (
+      <div className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden bg-[#040508]">
+        {/* Ambient Gradient Mesh for Non-WebGL / Mobile */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[600px] h-[350px] sm:h-[600px] bg-gradient-to-tr from-cyan-500/20 via-purple-500/15 to-transparent rounded-full blur-[100px] sm:blur-[140px] animate-pulse" />
+      </div>
+    );
+  }
 
   return (
     <div ref={containerRef} className="absolute inset-0 w-full h-full pointer-events-none z-0">
@@ -274,3 +312,4 @@ export const HeroCanvas: React.FC = () => {
     </div>
   );
 };
+

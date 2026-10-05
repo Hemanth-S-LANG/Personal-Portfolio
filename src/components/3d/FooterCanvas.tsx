@@ -1,16 +1,35 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
+
+const isWebGLSupported = (): boolean => {
+  try {
+    const canvas = document.createElement('canvas');
+    return !!(
+      window.WebGLRenderingContext &&
+      (canvas.getContext('webgl2') || canvas.getContext('webgl'))
+    );
+  } catch {
+    return false;
+  }
+};
 
 export const FooterCanvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [webGlAvailable, setWebGlAvailable] = useState<boolean>(true);
 
   useEffect(() => {
-    if (!canvasRef.current || !containerRef.current) return;
+    if (!isWebGLSupported()) {
+      setWebGlAvailable(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!webGlAvailable || !canvasRef.current || !containerRef.current) return;
     const container = containerRef.current;
     const canvas = canvasRef.current;
 
-    let renderer: THREE.WebGLRenderer;
+    let renderer: THREE.WebGLRenderer | null = null;
     try {
       renderer = new THREE.WebGLRenderer({
         canvas,
@@ -19,8 +38,16 @@ export const FooterCanvas: React.FC = () => {
         powerPreference: 'high-performance'
       });
     } catch {
+      setWebGlAvailable(false);
       return;
     }
+
+    const handleContextLost = (e: Event) => {
+      e.preventDefault();
+      setWebGlAvailable(false);
+    };
+
+    canvas.addEventListener('webglcontextlost', handleContextLost, false);
 
     const dpr = Math.min(window.devicePixelRatio, 2);
     renderer.setPixelRatio(dpr);
@@ -167,7 +194,7 @@ export const FooterCanvas: React.FC = () => {
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
 
     const handleResize = () => {
-      if (!containerRef.current) return;
+      if (!containerRef.current || !renderer) return;
       const w = containerRef.current.clientWidth;
       const h = containerRef.current.clientHeight;
       camera.aspect = w / h;
@@ -193,22 +220,31 @@ export const FooterCanvas: React.FC = () => {
       group.rotation.y = elapsedTime * 0.05 + mouse.x * 0.2;
       starPoints.rotation.y = elapsedTime * 0.02;
 
-      renderer.render(scene, camera);
+      renderer?.render(scene, camera);
     };
 
     animate();
 
     return () => {
       cancelAnimationFrame(animId);
+      canvas.removeEventListener('webglcontextlost', handleContextLost);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('touchstart', handleTouchMove);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('resize', handleResize);
-      renderer.dispose();
+      renderer?.dispose();
       waveGeometry.dispose();
       waveMaterial.dispose();
     };
-  }, []);
+  }, [webGlAvailable]);
+
+  if (!webGlAvailable) {
+    return (
+      <div className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden bg-[#040508]">
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-[200px] bg-cyan-500/10 blur-[100px] rounded-full" />
+      </div>
+    );
+  }
 
   return (
     <div ref={containerRef} className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden opacity-60">
@@ -216,3 +252,4 @@ export const FooterCanvas: React.FC = () => {
     </div>
   );
 };
+
