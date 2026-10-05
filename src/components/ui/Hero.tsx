@@ -13,7 +13,7 @@ export const Hero: React.FC = () => {
   };
 
   return (
-    <section id="hero" className="relative min-h-screen w-full flex items-center justify-center pt-28 pb-16 px-4 overflow-hidden">
+    <section id="hero" className="relative min-h-screen w-full flex items-center justify-center pt-24 xs:pt-28 pb-12 sm:pb-16 px-3.5 sm:px-4 overflow-hidden">
       {/* 3D Background Focal Canvas */}
       <HeroCanvas />
 
@@ -22,17 +22,17 @@ export const Hero: React.FC = () => {
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f293710_1px,transparent_1px),linear-gradient(to_bottom,#1f293710_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
 
       {/* Hero Content Container */}
-      <div className="relative z-10 max-w-5xl mx-auto text-center flex flex-col items-center">
+      <div className="relative z-10 max-w-5xl mx-auto text-center flex flex-col items-center w-full">
         {/* Status Pill */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full glass-panel border-sky-500/25 text-xs font-mono-code text-sky-300 mb-6 shadow-lg"
+          className="inline-flex flex-wrap items-center justify-center gap-1.5 xs:gap-2.5 px-3 py-1.5 xs:px-4 xs:py-1.5 rounded-full glass-panel border-sky-500/25 text-[11px] xs:text-xs font-mono-code text-sky-300 mb-5 sm:mb-6 shadow-lg text-center"
         >
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />
           <span>Software Developer Intern @ cognitest.io</span>
-          <span className="text-slate-600">•</span>
+          <span className="hidden xs:inline text-slate-600">•</span>
           <span className="text-slate-300">RNSIT CGPA 9.43</span>
         </motion.div>
 
@@ -41,7 +41,7 @@ export const Hero: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-5xl sm:text-7xl font-extrabold tracking-tight text-white mb-3 leading-none"
+          className="text-4xl xs:text-6xl sm:text-7xl font-extrabold tracking-tight text-white mb-3 leading-tight sm:leading-none"
         >
           HEMANTH S
         </motion.h1>
@@ -51,7 +51,7 @@ export const Hero: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-xl sm:text-2xl font-semibold text-slate-200 max-w-3xl mb-4 tracking-wide"
+          className="text-lg xs:text-xl sm:text-2xl font-semibold text-slate-200 max-w-3xl mb-4 tracking-wide px-2"
         >
           Full-Stack Developer & Security Engineer
         </motion.p>
@@ -61,9 +61,9 @@ export const Hero: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="text-sm sm:text-base text-slate-400 max-w-2xl mb-10 leading-relaxed font-normal"
+          className="text-xs xs:text-sm sm:text-base text-slate-400 max-w-2xl mb-8 sm:mb-10 leading-relaxed font-normal px-2"
         >
-          Building secure API platforms, async worker architectures (ARQ, Redis, Celery), and cloud web products across React, Next.js, FastAPI, Node.js, and Supabase.
+          Building secure API platforms, async worker architectures (ARQ, Redis), and cloud web products across React, Next.js, FastAPI, Node.js, and PostgreSQL.
         </motion.p>
 
         {/* CTA Buttons */}
@@ -71,11 +71,11 @@ export const Hero: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex flex-wrap items-center justify-center gap-4 mb-16"
+          className="flex flex-col xs:flex-row items-center justify-center gap-3 sm:gap-4 mb-12 sm:mb-16 w-full max-w-md xs:max-w-none px-2"
         >
           <button
             onClick={scrollToProjects}
-            className="group relative inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-sky-500 text-slate-950 font-bold text-sm shadow-[0_0_25px_rgba(56,189,248,0.35)] hover:shadow-[0_0_35px_rgba(56,189,248,0.5)] hover:scale-105 active:scale-95 transition-all"
+            className="w-full xs:w-auto group relative inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-3.5 rounded-full bg-sky-500 text-slate-950 font-bold text-xs sm:text-sm shadow-[0_0_25px_rgba(56,189,248,0.35)] hover:shadow-[0_0_35px_rgba(56,189,248,0.5)] active:scale-95 transition-all"
           >
             <span>Explore Engineering Case Studies</span>
             <ArrowDownRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:translate-y-0.5 transition-transform" />
@@ -85,7 +85,7 @@ export const Hero: React.FC = () => {
             href={PERSONAL_INFO.resumePdf}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full glass-panel-interactive border-white/15 text-slate-100 font-semibold text-sm hover:border-sky-500/50 hover:text-sky-300 transition-all"
+            className="w-full xs:w-auto inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-3.5 rounded-full glass-panel-interactive border-white/15 text-slate-100 font-semibold text-xs sm:text-sm hover:border-sky-500/50 hover:text-sky-300 active:scale-95 transition-all"
           >
             <Download className="w-4 h-4 text-sky-400" />
             <span>View Resume</span>
@@ -97,28 +97,28 @@ export const Hero: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 w-full max-w-4xl"
+          className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 w-full max-w-4xl px-2"
         >
-          <div className="glass-panel p-4 rounded-2xl border-white/5 text-left">
-            <div className="text-2xl font-extrabold text-sky-400 font-mono-code mb-0.5">9.43 / 10</div>
-            <div className="text-xs text-slate-400 font-medium">BE CSE CGPA</div>
+          <div className="glass-panel p-3.5 sm:p-4 rounded-2xl border-white/5 text-left">
+            <div className="text-xl xs:text-2xl font-extrabold text-sky-400 font-mono-code mb-0.5">9.43 / 10</div>
+            <div className="text-[11px] sm:text-xs text-slate-400 font-medium">BE CSE CGPA</div>
           </div>
-          <div className="glass-panel p-4 rounded-2xl border-white/5 text-left">
-            <div className="text-2xl font-extrabold text-purple-400 font-mono-code mb-0.5">250+</div>
-            <div className="text-xs text-slate-400 font-medium">LeetCode Solved</div>
+          <div className="glass-panel p-3.5 sm:p-4 rounded-2xl border-white/5 text-left">
+            <div className="text-xl xs:text-2xl font-extrabold text-purple-400 font-mono-code mb-0.5">250+</div>
+            <div className="text-[11px] sm:text-xs text-slate-400 font-medium">LeetCode Solved</div>
           </div>
-          <div className="glass-panel p-4 rounded-2xl border-white/5 text-left">
-            <div className="text-2xl font-extrabold text-emerald-400 font-mono-code mb-0.5">Zero SSRF</div>
-            <div className="text-xs text-slate-400 font-medium">Egress Security Guard</div>
+          <div className="glass-panel p-3.5 sm:p-4 rounded-2xl border-white/5 text-left">
+            <div className="text-xl xs:text-2xl font-extrabold text-emerald-400 font-mono-code mb-0.5">Zero SSRF</div>
+            <div className="text-[11px] sm:text-xs text-slate-400 font-medium">Egress Security Guard</div>
           </div>
-          <div className="glass-panel p-4 rounded-2xl border-white/5 text-left">
-            <div className="text-2xl font-extrabold text-amber-400 font-mono-code mb-0.5">Deployed</div>
-            <div className="text-xs text-slate-400 font-medium">Production Apps</div>
+          <div className="glass-panel p-3.5 sm:p-4 rounded-2xl border-white/5 text-left">
+            <div className="text-xl xs:text-2xl font-extrabold text-amber-400 font-mono-code mb-0.5">Deployed</div>
+            <div className="text-[11px] sm:text-xs text-slate-400 font-medium">Production Apps</div>
           </div>
         </motion.div>
 
         {/* Scroll Hint */}
-        <div className="mt-16 flex flex-col items-center gap-2 text-slate-500 text-xs font-mono-code tracking-widest uppercase">
+        <div className="mt-12 sm:mt-16 flex flex-col items-center gap-2 text-slate-500 text-[11px] sm:text-xs font-mono-code tracking-widest uppercase">
           <span>Scroll to Explore</span>
           <ChevronDown className="w-4 h-4 animate-bounce text-sky-400" />
         </div>

@@ -95,29 +95,29 @@ export const PROJECTS: Project[] = [
     category: 'Full-Stack Web',
     featured: true,
     period: '2026',
-    description: 'A modern cloud-backed personal note-taking workspace featuring rich block-based editing, drag-and-drop block reordering, Supabase authentication & cloud sync, attachment management, and PDF export.',
-    technologies: ['React 19', 'TypeScript', 'Vite', 'Tailwind CSS', 'Supabase', 'Radix UI', 'dnd-kit', 'jsPDF', 'TanStack Router'],
+    description: 'A modern cloud-backed personal note-taking workspace featuring rich block-based editing, drag-and-drop block reordering, secure authentication & cloud sync, attachment management, and PDF export.',
+    technologies: ['React 19', 'TypeScript', 'Vite', 'Tailwind CSS', 'PostgreSQL', 'Radix UI', 'dnd-kit', 'jsPDF', 'TanStack Router'],
     github: 'https://github.com/Hemanth-S-LANG/my-notes-hub',
     metrics: [
       { label: 'Editor Engine', value: 'Block-Based + Drag & Drop' },
-      { label: 'Cloud Sync', value: 'Supabase Real-Time Auth & DB' },
+      { label: 'Cloud Sync', value: 'Real-Time Auth & DB Layer' },
       { label: 'PDF Export', value: 'jsPDF + html2canvas Engine' }
     ],
     problem: 'Standard note applications either lock user data into proprietary formats or lack intuitive block-level reorganization and cross-device cloud persistence.',
-    solution: 'Engineered Notable—a cloud-backed note editor supporting modular block types (text, images, dividers), fluid drag-and-drop block reordering via @dnd-kit, automatic cloud sync to Supabase with local-to-cloud migration on sign-in, and instant PDF rendering.',
+    solution: 'Engineered Notable—a cloud-backed note editor supporting modular block types (text, images, dividers), fluid drag-and-drop block reordering via @dnd-kit, automatic cloud sync with local-to-cloud migration on sign-in, and instant PDF rendering.',
     architecture: [
       'React 19 & TanStack Router Frontend: High-performance SPA client with dark/light theme switching, responsive sidebar navigation, and Radix UI components.',
-      'Supabase Auth & Database Layer: Email/password and Google authentication paired with PostgreSQL tables enforcing Row-Level Security (RLS) for note/folder isolation.',
+      'Auth & Database Layer: Email/password and OAuth authentication paired with PostgreSQL tables enforcing Row-Level Security (RLS) for note/folder isolation.',
       'Draggable Block Architecture: Dynamic content canvas powered by @dnd-kit enabling reorderable text, image, and divider blocks.',
-      'Cloud Storage & PDF Exporter: Supabase Storage bucket handling file attachments with signed URLs, coupled with jsPDF and html2canvas for document export.'
+      'Cloud Storage & PDF Exporter: Cloud Storage bucket handling file attachments with signed URLs, coupled with jsPDF and html2canvas for document export.'
     ],
     keyHighlights: [
-      'Built cloud sync engine seamlessly migrating local browser storage notes to Supabase upon user sign-in.',
+      'Built cloud sync engine seamlessly migrating local browser storage notes to cloud database upon user sign-in.',
       'Implemented rich block-based editor supporting reorderable text, image, and divider blocks via @dnd-kit.',
-      'Integrated Supabase Storage for attachment uploads and built PDF export using jsPDF + html2canvas.',
+      'Integrated Cloud Storage for attachment uploads and built PDF export using jsPDF + html2canvas.',
       'Added full-text note search, folder management (All, Unfiled, Custom), and bulk note operations.'
     ],
-    challenges: 'Ensuring debounced auto-save triggers do not collide with drag-and-drop block reordering state, while maintaining signed URL lifetime for Supabase attachment assets.',
+    challenges: 'Ensuring debounced auto-save triggers do not collide with drag-and-drop block reordering state, while maintaining signed URL lifetime for cloud attachment assets.',
     impact: 'Delivered a clean personal notes workspace combining desktop-grade editing flexibility with real-time cloud synchronization.'
   },
   {
@@ -160,23 +160,23 @@ export const PROJECTS: Project[] = [
     featured: true,
     period: 'April 2026',
     description: 'Autonomous multi-agent debate platform where specialized AI agents argue complex questions from contrasting domain perspectives before a moderator agent synthesizes a reasoned verdict.',
-    technologies: ['Python', 'FastAPI', 'LangGraph', 'Celery', 'Redis', 'React.js', 'Tailwind CSS'],
+    technologies: ['Python', 'FastAPI', 'LangGraph', 'Redis', 'React.js', 'Tailwind CSS'],
     github: 'https://github.com/Hemanth-S-LANG',
     metrics: [
       { label: 'Agent Workflow', value: 'LangGraph Orchestrated' },
-      { label: 'Task Execution', value: 'Async Celery + Redis' },
+      { label: 'Task Execution', value: 'Async Worker Pools + Redis' },
       { label: 'State Stream', value: 'FastAPI SSE Telemetry' }
     ],
     problem: 'Single-prompt LLM answers often exhibit single-point bias and lack domain-specific dialectic reasoning when analyzing multi-faceted decisions.',
     solution: 'Designed a multi-agent debate ecosystem using LangGraph. Agents assume specialized personas (e.g., Security Analyst, Financial Strategist, Risk Auditor) to debate a prompt asynchronously, streaming live debate state to a interactive React frontend.',
     architecture: [
       'LangGraph DAG State Machine: Defines agent turn-taking, counter-argument routing, and moderator verdict synthesis nodes.',
-      'Async Celery & Redis Task Broker: Handles non-blocking LLM API queries across parallel agent nodes.',
+      'Async Worker & Redis Task Broker: Handles non-blocking LLM API queries across parallel agent nodes.',
       'FastAPI Telemetry Server: Streams live agent dialogue state and argument graph directly to client UI via Server-Sent Events.'
     ],
     keyHighlights: [
       'Built multi-agent debate system where specialized AI agents argue questions from different perspectives before a moderator synthesizes a final verdict.',
-      'Orchestrated agent workflows using LangGraph with async task processing via Celery and Redis.',
+      'Orchestrated agent workflows using LangGraph with async task processing via Redis.',
       'Built FastAPI backend streaming live debate state to a React frontend visualizing arguments and verdict history.'
     ],
     challenges: 'Managing graph cycle state transitions in LangGraph while ensuring live SSE updates remain synchronized with the debate step index without frontend stutter.',
@@ -322,12 +322,10 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
     title: 'Databases & Cloud Backends',
     description: 'Data storage engines, cloud platforms, and task processing',
     skills: [
-      { name: 'Supabase', projectsUsed: ['my-notes-hub'] },
       { name: 'MongoDB', projectsUsed: ['lms', 'pixel-frame', 'password-manager'] },
       { name: 'PostgreSQL', projectsUsed: ['cognitest', 'my-notes-hub'] },
       { name: 'Redis', projectsUsed: ['cognitest', 'multi-agent-ai'] },
       { name: 'ARQ', projectsUsed: ['cognitest'] },
-      { name: 'Celery', projectsUsed: ['multi-agent-ai'] },
       { name: 'Prisma ORM', projectsUsed: ['cognitest'] }
     ]
   },

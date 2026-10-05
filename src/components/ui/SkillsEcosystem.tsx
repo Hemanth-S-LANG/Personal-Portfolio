@@ -62,42 +62,42 @@ export const SkillsEcosystem: React.FC = () => {
   };
 
   return (
-    <section id="skills" className="relative py-24 px-4 max-w-6xl mx-auto">
+    <section id="skills" className="relative py-16 sm:py-24 px-3.5 sm:px-4 max-w-6xl mx-auto">
       {/* Background Ambient Glow */}
-      <div className="absolute top-1/2 left-1/3 -translate-y-1/2 w-96 h-96 bg-sky-500/10 blur-[140px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/2 left-1/3 -translate-y-1/2 w-64 h-64 sm:w-96 sm:h-96 bg-sky-500/10 blur-[100px] sm:blur-[140px] rounded-full pointer-events-none" />
 
       {/* Section Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 sm:mb-12">
         <div>
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-xs font-mono-code text-sky-300 mb-3">
+          <div className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-[11px] sm:text-xs font-mono-code text-sky-300 mb-3">
             <Cpu className="w-3.5 h-3.5" />
             <span>04 // TECHNICAL ECOSYSTEM</span>
           </div>
-          <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
+          <h2 className="text-2xl xs:text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
             Technologies & Tools
           </h2>
-          <p className="text-sm text-slate-400 mt-2">
-            Hover over any moving technology card to inspect the production projects where I used it.
+          <p className="text-xs sm:text-sm text-slate-400 mt-2">
+            Hover or tap any technology card below to inspect verified production project code.
           </p>
         </div>
 
         {/* View Switcher Controls */}
-        <div className="flex items-center gap-1.5 bg-slate-950/80 p-1.5 rounded-2xl border border-white/10">
+        <div className="flex items-center gap-1.5 bg-slate-950/80 p-1.5 rounded-2xl border border-white/10 self-start md:self-auto">
           <button
             onClick={() => setViewMode('marquee')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-mono-code flex items-center gap-1.5 transition-all ${
+            className={`px-3 sm:px-3.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-mono-code flex items-center gap-1.5 transition-all active:scale-95 ${
               viewMode === 'marquee'
                 ? 'bg-sky-500 text-slate-950 font-bold shadow-md'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
             <Radio className="w-3.5 h-3.5" />
-            Moving Cards Track
+            Moving Cards
           </button>
 
           <button
             onClick={() => setViewMode('grid')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-mono-code flex items-center gap-1.5 transition-all ${
+            className={`px-3 sm:px-3.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-mono-code flex items-center gap-1.5 transition-all active:scale-95 ${
               viewMode === 'grid'
                 ? 'bg-sky-500 text-slate-950 font-bold shadow-md'
                 : 'text-slate-400 hover:text-white'
@@ -110,11 +110,11 @@ export const SkillsEcosystem: React.FC = () => {
       </div>
 
       {viewMode === 'marquee' ? (
-        /* --- MOVING FLASH CARDS MARQUEE TRACK (User Requested Visual) --- */
-        <div className="space-y-6">
+        /* --- MOVING FLASH CARDS MARQUEE TRACK --- */
+        <div className="space-y-4 sm:space-y-6">
           {/* Row 1 — Moving Left */}
           <div className="relative overflow-hidden py-3 group">
-            <div className="flex w-max gap-4 animate-marquee group-hover:[animation-play-state:paused]">
+            <div className="flex w-max gap-3 sm:gap-4 animate-marquee group-hover:[animation-play-state:paused] active:[animation-play-state:paused]">
               {[...TECH_FLASH_CARDS_ROW1, ...TECH_FLASH_CARDS_ROW1, ...TECH_FLASH_CARDS_ROW1].map((card, idx) => {
                 const isHovered = hoveredSkill === card.name;
                 return (
@@ -122,7 +122,9 @@ export const SkillsEcosystem: React.FC = () => {
                     key={`${card.name}-${idx}`}
                     onMouseEnter={() => handleMouseEnterSkill(card.name, card.projectsUsed)}
                     onMouseLeave={handleMouseLeaveSkill}
-                    className={`flex items-center gap-2.5 px-5 py-3 rounded-2xl border text-xs sm:text-sm font-medium font-mono-code transition-all duration-200 shadow-md ${
+                    onClick={() => handleMouseEnterSkill(card.name, card.projectsUsed)}
+                    onTouchStart={() => handleMouseEnterSkill(card.name, card.projectsUsed)}
+                    className={`flex items-center gap-2 sm:gap-2.5 px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl border text-xs sm:text-sm font-medium font-mono-code transition-all duration-200 shadow-md active:scale-95 ${
                       isHovered
                         ? 'bg-sky-500 text-slate-950 font-extrabold border-sky-400 scale-105 shadow-[0_0_20px_rgba(56,189,248,0.4)]'
                         : 'bg-[#0b0e18]/80 border-white/10 text-slate-200 hover:border-sky-400/50 hover:bg-[#121727]'
@@ -131,7 +133,7 @@ export const SkillsEcosystem: React.FC = () => {
                     <span className="flex-shrink-0">{card.icon}</span>
                     <span>{card.name}</span>
                     {card.projectsUsed.length > 0 && (
-                      <span className="px-1.5 py-0.5 rounded-md text-[10px] bg-sky-500/10 text-sky-300 font-bold">
+                      <span className="px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] bg-sky-500/10 text-sky-300 font-bold">
                         {card.projectsUsed.length}
                       </span>
                     )}
@@ -143,7 +145,7 @@ export const SkillsEcosystem: React.FC = () => {
 
           {/* Row 2 — Moving Right */}
           <div className="relative overflow-hidden py-3 group">
-            <div className="flex w-max gap-4 animate-marquee-reverse group-hover:[animation-play-state:paused]">
+            <div className="flex w-max gap-3 sm:gap-4 animate-marquee-reverse group-hover:[animation-play-state:paused] active:[animation-play-state:paused]">
               {[...TECH_FLASH_CARDS_ROW2, ...TECH_FLASH_CARDS_ROW2, ...TECH_FLASH_CARDS_ROW2].map((card, idx) => {
                 const isHovered = hoveredSkill === card.name;
                 return (
@@ -151,7 +153,9 @@ export const SkillsEcosystem: React.FC = () => {
                     key={`${card.name}-${idx}`}
                     onMouseEnter={() => handleMouseEnterSkill(card.name, card.projectsUsed)}
                     onMouseLeave={handleMouseLeaveSkill}
-                    className={`flex items-center gap-2.5 px-5 py-3 rounded-2xl border text-xs sm:text-sm font-medium font-mono-code transition-all duration-200 shadow-md ${
+                    onClick={() => handleMouseEnterSkill(card.name, card.projectsUsed)}
+                    onTouchStart={() => handleMouseEnterSkill(card.name, card.projectsUsed)}
+                    className={`flex items-center gap-2 sm:gap-2.5 px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl border text-xs sm:text-sm font-medium font-mono-code transition-all duration-200 shadow-md active:scale-95 ${
                       isHovered
                         ? 'bg-purple-500 text-slate-950 font-extrabold border-purple-400 scale-105 shadow-[0_0_20px_rgba(168,85,247,0.4)]'
                         : 'bg-[#0b0e18]/80 border-white/10 text-slate-200 hover:border-purple-400/50 hover:bg-[#121727]'
@@ -160,7 +164,7 @@ export const SkillsEcosystem: React.FC = () => {
                     <span className="flex-shrink-0">{card.icon}</span>
                     <span>{card.name}</span>
                     {card.projectsUsed.length > 0 && (
-                      <span className="px-1.5 py-0.5 rounded-md text-[10px] bg-purple-500/10 text-purple-300 font-bold">
+                      <span className="px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] bg-purple-500/10 text-purple-300 font-bold">
                         {card.projectsUsed.length}
                       </span>
                     )}
@@ -172,17 +176,17 @@ export const SkillsEcosystem: React.FC = () => {
         </div>
       ) : (
         /* --- CATEGORIZED GRID VIEW --- */
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {SKILL_CATEGORIES.map((cat) => (
             <div
               key={cat.title}
-              className="glass-panel p-6 rounded-3xl border-white/10 hover:border-white/20 transition-all"
+              className="glass-panel p-5 xs:p-6 rounded-2xl sm:rounded-3xl border-white/10 hover:border-white/20 transition-all"
             >
-              <h3 className="text-lg font-bold text-white mb-1 flex items-center gap-2">
+              <h3 className="text-base sm:text-lg font-bold text-white mb-1 flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-sky-400" />
                 {cat.title}
               </h3>
-              <p className="text-xs text-slate-400 mb-4">{cat.description}</p>
+              <p className="text-[11px] sm:text-xs text-slate-400 mb-4">{cat.description}</p>
 
               <div className="flex flex-wrap gap-2">
                 {cat.skills.map((skill) => {
@@ -192,7 +196,9 @@ export const SkillsEcosystem: React.FC = () => {
                       key={skill.name}
                       onMouseEnter={() => handleMouseEnterSkill(skill.name, skill.projectsUsed)}
                       onMouseLeave={handleMouseLeaveSkill}
-                      className={`px-3.5 py-2 rounded-xl text-xs font-mono-code border transition-all ${
+                      onClick={() => handleMouseEnterSkill(skill.name, skill.projectsUsed)}
+                      onTouchStart={() => handleMouseEnterSkill(skill.name, skill.projectsUsed)}
+                      className={`px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-mono-code border transition-all active:scale-95 ${
                         isHovered
                           ? 'bg-sky-500 text-slate-950 font-extrabold border-sky-400 scale-105'
                           : 'bg-white/5 border-white/10 text-slate-200 hover:border-sky-500/40'
@@ -208,30 +214,30 @@ export const SkillsEcosystem: React.FC = () => {
         </div>
       )}
 
-      {/* Hover Evidence Trace Box */}
-      <div className="mt-10 glass-panel p-6 rounded-3xl border-white/10 bg-[#090c19]/90 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 flex-shrink-0">
-            <Link2 className="w-5 h-5" />
+      {/* Hover/Touch Evidence Trace Box */}
+      <div className="mt-8 sm:mt-10 glass-panel p-5 sm:p-6 rounded-2xl sm:rounded-3xl border-white/10 bg-[#090c19]/90 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-3 w-full md:w-auto">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 flex-shrink-0">
+            <Link2 className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
           <div>
-            <div className="text-xs font-mono-code text-sky-400 uppercase tracking-widest">
+            <div className="text-[11px] sm:text-xs font-mono-code text-sky-400 uppercase tracking-widest">
               Evidence Traceability
             </div>
             {hoveredSkill ? (
-              <div className="text-sm font-bold text-white">
+              <div className="text-xs sm:text-sm font-bold text-white">
                 <span className="text-sky-400">{hoveredSkill}</span> is verified in {highlightedProjectIds.length} project(s)
               </div>
             ) : (
-              <div className="text-xs text-slate-400">
-                Hover over any moving technology card above to inspect verified code implementation.
+              <div className="text-[11px] sm:text-xs text-slate-400">
+                Hover or tap any technology card above to inspect verified code implementation.
               </div>
             )}
           </div>
         </div>
 
         {hoveredSkill && highlightedProjectIds.length > 0 && (
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 w-full md:w-auto">
             {highlightedProjectIds.map((projId) => {
               const proj = PROJECTS.find((p) => p.id === projId);
               if (!proj) return null;

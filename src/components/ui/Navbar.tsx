@@ -47,22 +47,22 @@ export const Navbar: React.FC = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 px-4 pt-4 sm:pt-6 transition-all duration-300">
+    <header className="fixed top-0 left-0 right-0 z-50 px-3 sm:px-4 pt-3 sm:pt-6 transition-all duration-300">
       <div className="max-w-6xl mx-auto flex items-center justify-between">
         {/* Brand Logo */}
         <button
           onClick={() => scrollToSection('hero')}
-          className="group flex items-center gap-2.5 px-3.5 py-2 rounded-full glass-panel border-white/10 hover:border-cyan-500/40 transition-all text-left"
+          className="group flex items-center gap-2 sm:gap-2.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full glass-panel border-white/10 hover:border-cyan-500/40 transition-all text-left active:scale-95"
         >
-          <div className="w-8 h-8 rounded-full bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:scale-105 transition-transform">
-            <Terminal className="w-4 h-4" />
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:scale-105 transition-transform flex-shrink-0">
+            <Terminal className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </div>
           <div>
-            <div className="font-bold text-sm text-slate-100 tracking-tight flex items-center gap-1.5">
+            <div className="font-bold text-xs sm:text-sm text-slate-100 tracking-tight flex items-center gap-1.5">
               HEMANTH S
               <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse" title="Available for engineering roles" />
             </div>
-            <div className="text-[10px] text-slate-400 font-mono-code leading-none">
+            <div className="text-[9px] sm:text-[10px] text-slate-400 font-mono-code leading-none">
               CS @ RNSIT
             </div>
           </div>
@@ -117,7 +117,7 @@ export const Navbar: React.FC = () => {
             href={PERSONAL_INFO.resumePdf}
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 text-white shadow-lg hover:shadow-cyan-500/25 hover:scale-[1.02] transition-all"
+            className="flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 text-white shadow-lg hover:shadow-cyan-500/25 hover:scale-[1.02] active:scale-95 transition-all"
           >
             <FileText className="w-3.5 h-3.5" />
             Resume
@@ -128,66 +128,100 @@ export const Navbar: React.FC = () => {
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle navigation menu"
-          className="md:hidden p-2.5 rounded-full glass-panel border-white/10 text-slate-200 hover:text-cyan-400"
+          className="md:hidden p-2.5 rounded-full glass-panel border-white/10 text-slate-200 hover:text-cyan-400 active:scale-95 transition-all"
         >
           {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Backdrop & Drawer Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="md:hidden mt-3 max-w-6xl mx-auto rounded-2xl glass-panel p-5 border-white/10 shadow-2xl flex flex-col gap-3"
-          >
-            <div className="grid grid-cols-2 gap-2">
-              {NAV_ITEMS.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => scrollToSection(item.id)}
-                  className={`px-4 py-2.5 rounded-xl text-left text-xs font-medium border transition-all ${
-                    activeSection === item.id
-                      ? 'bg-cyan-500/10 border-cyan-500/40 text-cyan-300 font-semibold'
-                      : 'bg-white/5 border-white/5 text-slate-300 hover:bg-white/10'
-                  }`}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
-            <div className="pt-2 border-t border-white/10 flex items-center justify-between">
-              <div className="flex gap-2">
-                <a
-                  href={PERSONAL_INFO.github}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:text-cyan-400"
-                >
-                  <GithubIcon className="w-4 h-4" />
-                </a>
-                <a
-                  href={PERSONAL_INFO.linkedin}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:text-cyan-400"
-                >
-                  <LinkedinIcon className="w-4 h-4" />
-                </a>
+          <>
+            {/* Dark Backdrop Overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="fixed inset-0 bg-black/70 backdrop-blur-md z-40 md:hidden"
+            />
+
+            {/* Floating Drawer Container */}
+            <motion.div
+              initial={{ opacity: 0, y: -20, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.96 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="relative z-50 md:hidden mt-3 max-w-6xl mx-auto rounded-3xl glass-panel p-5 border-white/15 shadow-2xl flex flex-col gap-4 bg-[#090c19]/95"
+            >
+              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                <span className="text-xs font-mono-code text-cyan-400 font-bold uppercase tracking-wider">
+                  Navigation Menu
+                </span>
+                <span className="text-[10px] font-mono-code text-slate-400">
+                  {NAV_ITEMS.length} Sections
+                </span>
               </div>
-              <a
-                href={PERSONAL_INFO.resumePdf}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-500 text-black font-semibold text-xs"
-              >
-                <FileText className="w-4 h-4" />
-                Download Resume
-              </a>
-            </div>
-          </motion.div>
+
+              {/* Grid of Navigation Items */}
+              <div className="grid grid-cols-2 gap-2.5">
+                {NAV_ITEMS.map((item) => {
+                  const isActive = activeSection === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => scrollToSection(item.id)}
+                      className={`px-4 py-3 rounded-2xl text-left text-xs font-medium border transition-all flex items-center justify-between active:scale-95 ${
+                        isActive
+                          ? 'bg-cyan-500/15 border-cyan-400/50 text-cyan-300 font-bold shadow-[0_0_15px_rgba(56,189,248,0.2)]'
+                          : 'bg-white/5 border-white/5 text-slate-300 hover:bg-white/10 hover:border-white/10'
+                      }`}
+                    >
+                      <span>{item.label}</span>
+                      {isActive && <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Quick Action Footer in Drawer */}
+              <div className="pt-3 border-t border-white/10 flex flex-col gap-3">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <a
+                      href={PERSONAL_INFO.github}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label="GitHub Profile"
+                      className="p-3 rounded-2xl bg-white/5 border border-white/10 text-slate-300 hover:text-cyan-400 active:scale-95"
+                    >
+                      <GithubIcon className="w-4 h-4" />
+                    </a>
+                    <a
+                      href={PERSONAL_INFO.linkedin}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label="LinkedIn Profile"
+                      className="p-3 rounded-2xl bg-white/5 border border-white/10 text-slate-300 hover:text-cyan-400 active:scale-95"
+                    >
+                      <LinkedinIcon className="w-4 h-4" />
+                    </a>
+                  </div>
+
+                  <a
+                    href={PERSONAL_INFO.resumePdf}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-extrabold text-xs shadow-lg active:scale-95 transition-all"
+                  >
+                    <FileText className="w-4 h-4" />
+                    Download Resume
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </header>

@@ -195,15 +195,27 @@ export const HeroCanvas: React.FC = () => {
 
     const mouse = { x: 0, y: 0, targetX: 0, targetY: 0 };
 
-    const handleMouseMove = (e: MouseEvent) => {
+    const updateCoords = (clientX: number, clientY: number) => {
       const rect = container.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      const y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
+      const x = ((clientX - rect.left) / rect.width) * 2 - 1;
+      const y = -(((clientY - rect.top) / rect.height) * 2 - 1);
       mouse.targetX = x;
       mouse.targetY = y;
     };
 
+    const handleMouseMove = (e: MouseEvent) => {
+      updateCoords(e.clientX, e.clientY);
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        updateCoords(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    };
+
     window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('touchstart', handleTouchMove, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
 
     const handleResize = () => {
       if (!containerRef.current) return;
@@ -247,6 +259,8 @@ export const HeroCanvas: React.FC = () => {
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('touchstart', handleTouchMove);
+      window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('resize', handleResize);
       renderer.dispose();
       sphereGeometry.dispose();
