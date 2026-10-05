@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 /* Custom breakpoints — xs fills the gap between base (0px) and sm (640px) */
+/* Must use rem units to match Tailwind v4's default breakpoint unit (475px = 29.6875rem) */
 @theme {
-  --breakpoint-xs: 475px;
+  --breakpoint-xs: 29.6875rem;
 }
 
 @layer base {
@@ -30,10 +31,13 @@
     background: #07080c;
     color: #f1f5f9;
     overflow-x: hidden;
-    selection-background-color: rgba(56, 189, 248, 0.25);
-    selection-color: #ffffff;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background-color: rgba(56, 189, 248, 0.25);
+    color: #ffffff;
   }
 }
 
@@ -96,6 +100,7 @@
 
 .text-gradient-cyan {
   background: linear-gradient(135deg, #ffffff 0%, #38bdf8 100%);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
