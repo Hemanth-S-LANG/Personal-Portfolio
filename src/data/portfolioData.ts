@@ -7,7 +7,6 @@ export const PERSONAL_INFO = {
   bio: 'Full-stack developer with hands-on experience securing and scaling a production API platform (cognitest.io), working across React, Node.js, Express, FastAPI, and Redis. Passionate about API security (SSRF, auth hardening), async job architectures, and cloud-backed microservices.',
   location: 'Bangalore, India',
   email: 'hs6384013@gmail.com',
-  phone: '+91 6363285815',
   github: 'https://github.com/Hemanth-S-LANG',
   linkedin: 'https://www.linkedin.com/in/hemanth-s-685296318',
   leetcode: 'https://leetcode.com/u/Hemanth_S/',

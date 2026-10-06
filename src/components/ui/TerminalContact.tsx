@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Terminal as TerminalIcon, Check, Mail, Phone, FileText } from 'lucide-react';
+import { Terminal as TerminalIcon, Mail, FileText } from 'lucide-react';
 import { PERSONAL_INFO } from '../../data/portfolioData';
 import { GithubIcon, LinkedinIcon } from './Icons';
 
@@ -22,7 +22,6 @@ export const TerminalContact: React.FC = () => {
     }
   ]);
 
-  const [copied, setCopied] = useState(false);
   const terminalEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -41,7 +40,7 @@ export const TerminalContact: React.FC = () => {
         outputNode = (
           <div className="text-xs font-mono-code text-slate-300 space-y-1">
             <div>Available Commands:</div>
-            <div><span className="text-sky-400 font-bold">contact</span>   - Displays email, phone, and direct messaging channels.</div>
+            <div><span className="text-sky-400 font-bold">contact</span>   - Displays email and direct messaging channels.</div>
             <div><span className="text-sky-400 font-bold">resume</span>    - Opens/downloads official PDF resume.</div>
             <div><span className="text-sky-400 font-bold">skills</span>    - Outputs core technology stack.</div>
             <div><span className="text-sky-400 font-bold">socials</span>   - Outputs GitHub and LinkedIn profile links.</div>
@@ -54,7 +53,6 @@ export const TerminalContact: React.FC = () => {
         outputNode = (
           <div className="text-xs font-mono-code text-slate-300 space-y-1">
             <div>Email: <a href={`mailto:${PERSONAL_INFO.email}`} className="text-sky-400 underline">{PERSONAL_INFO.email}</a></div>
-            <div>Phone: <span className="text-emerald-400">{PERSONAL_INFO.phone}</span></div>
             <div>Location: <span>{PERSONAL_INFO.location}</span></div>
           </div>
         );
@@ -100,11 +98,6 @@ export const TerminalContact: React.FC = () => {
     setInputVal('');
   };
 
-  const copyPhone = () => {
-    navigator.clipboard.writeText(PERSONAL_INFO.phone);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
 
   return (
     <section id="contact" className="relative py-16 sm:py-24 px-3.5 sm:px-4 max-w-4xl mx-auto">
@@ -176,13 +169,6 @@ export const TerminalContact: React.FC = () => {
             <Mail className="w-3.5 h-3.5 flex-shrink-0" />
             <span>Email Me</span>
           </a>
-          <button
-            onClick={copyPhone}
-            className="px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-mono-code text-slate-200 hover:border-sky-500/40 active:scale-95 transition-all flex items-center justify-center gap-2"
-          >
-            {copied ? <Check className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" /> : <Phone className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" />}
-            <span>{copied ? 'Phone Copied!' : 'Copy Phone'}</span>
-          </button>
           <a
             href={PERSONAL_INFO.linkedin}
             target="_blank"
