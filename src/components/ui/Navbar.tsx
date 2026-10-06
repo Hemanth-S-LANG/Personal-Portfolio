@@ -115,6 +115,7 @@ export const Navbar: React.FC = () => {
           </a>
           <a
             href={PERSONAL_INFO.resumePdf}
+            download="Hemanth_S_Resume.pdf"
             target="_blank"
             rel="noreferrer"
             className="flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 text-white shadow-lg hover:shadow-cyan-500/25 hover:scale-[1.02] active:scale-95 transition-all"
@@ -211,6 +212,7 @@ export const Navbar: React.FC = () => {
 
                   <a
                     href={PERSONAL_INFO.resumePdf}
+                    download="Hemanth_S_Resume.pdf"
                     target="_blank"
                     rel="noreferrer"
                     className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-extrabold text-xs shadow-lg active:scale-95 transition-all"

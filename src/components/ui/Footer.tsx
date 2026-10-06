@@ -77,6 +77,7 @@ export const Footer: React.FC = () => {
           </a>
           <a
             href={PERSONAL_INFO.resumePdf}
+            download="Hemanth_S_Resume.pdf"
             target="_blank"
             rel="noreferrer"
             aria-label="Resume PDF"

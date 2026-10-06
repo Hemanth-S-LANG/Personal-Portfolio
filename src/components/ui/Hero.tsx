@@ -83,6 +83,7 @@ export const Hero: React.FC = () => {
 
           <a
             href={PERSONAL_INFO.resumePdf}
+            download="Hemanth_S_Resume.pdf"
             target="_blank"
             rel="noreferrer"
             className="w-full xs:w-auto inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-3.5 rounded-full glass-panel-interactive border-white/15 text-slate-100 font-semibold text-xs sm:text-sm hover:border-sky-500/50 hover:text-sky-300 active:scale-95 transition-all"
