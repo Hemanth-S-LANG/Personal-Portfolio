@@ -79,8 +79,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Critical inline styles: prevent white flash before CSS bundle loads -->
+  <style>
+    html, body, #root { background: #040508; color: #f1f5f9; margin: 0; padding: 0; }
+  </style>
 </head>
-<body class="bg-[#040508] text-slate-100 antialiased selection:bg-cyan-500/30 selection:text-white">
+<body class="bg-[#040508] text-slate-100 antialiased selection:bg-cyan-500/30 selection:text-white" style="background:#040508;color:#f1f5f9;">
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
 </body>

@@ -1,8 +1,37 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowDownRight, Download, ChevronDown } from 'lucide-react';
-import { HeroCanvas } from '../3d/HeroCanvas';
 import { PERSONAL_INFO } from '../../data/portfolioData';
+
+// Lazy-load the heavy Three.js canvas — doesn't block the initial HTML render
+const HeroCanvas = lazy(() =>
+  import('../3d/HeroCanvas').then((m) => ({ default: m.HeroCanvas }))
+);
+
+// Shown instantly while Three.js is downloading — a pulsing orb so the
+// section never looks empty or white
+const HeroCanvasPlaceholder: React.FC = () => (
+  <div className="absolute inset-0 w-full h-full pointer-events-none z-0 flex items-center justify-center overflow-hidden">
+    {/* Outer slow-pulse ring */}
+    <div className="absolute w-[340px] h-[340px] sm:w-[480px] sm:h-[480px] rounded-full border border-sky-500/20 animate-pulse" />
+    {/* Middle glow orb */}
+    <div
+      className="absolute w-[220px] h-[220px] sm:w-[320px] sm:h-[320px] rounded-full"
+      style={{
+        background: 'radial-gradient(ellipse at center, rgba(122,60,255,0.18) 0%, rgba(0,240,255,0.10) 55%, transparent 75%)',
+        animation: 'heroPulse 2.4s ease-in-out infinite',
+      }}
+    />
+    {/* Inner core bright dot */}
+    <div
+      className="absolute w-[80px] h-[80px] sm:w-[110px] sm:h-[110px] rounded-full"
+      style={{
+        background: 'radial-gradient(ellipse at center, rgba(0,240,255,0.22) 0%, transparent 70%)',
+        animation: 'heroPulse 2.4s ease-in-out infinite 0.4s',
+      }}
+    />
+  </div>
+);
 
 export const Hero: React.FC = () => {
   const scrollToProjects = () => {
@@ -14,8 +43,10 @@ export const Hero: React.FC = () => {
 
   return (
     <section id="hero" className="relative min-h-screen w-full flex items-center justify-center pt-24 xs:pt-28 pb-12 sm:pb-16 px-3.5 sm:px-4 overflow-hidden">
-      {/* 3D Background Focal Canvas */}
-      <HeroCanvas />
+      {/* 3D Background Focal Canvas — lazy loaded, placeholder shown instantly */}
+      <Suspense fallback={<HeroCanvasPlaceholder />}>
+        <HeroCanvas />
+      </Suspense>
 
       {/* Grid overlay */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-sky-950/20 via-transparent to-transparent pointer-events-none" />

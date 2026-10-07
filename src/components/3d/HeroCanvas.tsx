@@ -11,19 +11,23 @@ export const HeroCanvas: React.FC = () => {
     const container = containerRef.current;
     const canvas = canvasRef.current;
 
+    // Detect mobile once — drives all quality knobs below
+    const isMobile = window.innerWidth < 768;
+
     let renderer: THREE.WebGLRenderer;
     try {
       renderer = new THREE.WebGLRenderer({
         canvas,
-        antialias: true,
+        antialias: !isMobile,   // antialias is expensive — skip it on mobile
         alpha: true,
-        powerPreference: 'default'
+        powerPreference: 'high-performance'
       });
     } catch {
       return;
     }
 
-    const dpr = Math.min(window.devicePixelRatio, 2);
+    // Cap DPR at 1 on mobile (halves fill-rate), 2 on desktop
+    const dpr = isMobile ? Math.min(window.devicePixelRatio, 1) : Math.min(window.devicePixelRatio, 2);
     renderer.setPixelRatio(dpr);
 
     let width = container.clientWidth || window.innerWidth;
@@ -38,9 +42,10 @@ export const HeroCanvas: React.FC = () => {
     const group = new THREE.Group();
     scene.add(group);
 
-    // Responsive particle count: smooth 60fps across laptop & phone
-    const isMobile = window.innerWidth < 768;
-    const particleCount = isMobile ? 1200 : 2400;
+    // Particle counts scaled to device capability
+    // Mobile: 800 core + smaller rings — smooth 60fps on mid-range Android/iOS
+    // Desktop: 2400 core + full rings
+    const particleCount = isMobile ? 800 : 2400;
 
     // --- 1. CORE PARTICLES SPHERE ---
     const sphereRadius = 2.0;
@@ -173,13 +178,13 @@ export const HeroCanvas: React.FC = () => {
       return ringPoints;
     };
 
-    const ring1 = createRing(2.8, isMobile ? 300 : 400, Math.PI / 4, 0, '#00F0FF');
-    const ring2 = createRing(3.4, isMobile ? 400 : 600, -Math.PI / 3, Math.PI / 6, '#7A3CFF');
+    const ring1 = createRing(2.8, isMobile ? 180 : 400, Math.PI / 4, 0, '#00F0FF');
+    const ring2 = createRing(3.4, isMobile ? 220 : 600, -Math.PI / 3, Math.PI / 6, '#7A3CFF');
     group.add(ring1);
     group.add(ring2);
 
     // --- 3. BACKGROUND PARTICLES ---
-    const bgCount = isMobile ? 300 : 500;
+    const bgCount = isMobile ? 150 : 500;
     const bgGeo = new THREE.BufferGeometry();
     const bgPos = new Float32Array(bgCount * 3);
     for (let i = 0; i < bgCount * 3; i += 3) {
@@ -233,7 +238,9 @@ export const HeroCanvas: React.FC = () => {
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
-      sphereMaterial.uniforms.uDpr.value = Math.min(window.devicePixelRatio, 2);
+      sphereMaterial.uniforms.uDpr.value = isMobile
+        ? Math.min(window.devicePixelRatio, 1)
+        : Math.min(window.devicePixelRatio, 2);
     };
 
     window.addEventListener('resize', handleResize);

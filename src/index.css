@@ -117,6 +117,12 @@
   font-family: 'JetBrains Mono', monospace;
 }
 
+/* Hero canvas loading placeholder pulse */
+@keyframes heroPulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.06); }
+}
+
 /* Infinite Marquee Track Animations with mobile speed adjustments */
 @keyframes marquee {
   0% { transform: translateX(0%); }
