@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Terminal as TerminalIcon, Mail, FileText } from 'lucide-react';
 import { PERSONAL_INFO } from '../../data/portfolioData';
-import { GithubIcon, LinkedinIcon } from './Icons';
+import { GithubIcon, LinkedinIcon, LeetCodeIcon } from './Icons';
 
 interface TerminalLog {
   command: string;
@@ -43,7 +43,7 @@ export const TerminalContact: React.FC = () => {
             <div><span className="text-sky-400 font-bold">contact</span>   - Displays email and direct messaging channels.</div>
             <div><span className="text-sky-400 font-bold">resume</span>    - Opens/downloads official PDF resume.</div>
             <div><span className="text-sky-400 font-bold">skills</span>    - Outputs core technology stack.</div>
-            <div><span className="text-sky-400 font-bold">socials</span>   - Outputs GitHub and LinkedIn profile links.</div>
+            <div><span className="text-sky-400 font-bold">socials</span>   - Outputs GitHub, LinkedIn, and LeetCode profile links.</div>
             <div><span className="text-sky-400 font-bold">clear</span>     - Clears the terminal screen.</div>
           </div>
         );
@@ -76,6 +76,7 @@ export const TerminalContact: React.FC = () => {
           <div className="text-xs font-mono-code text-slate-300 space-y-1">
             <div>GitHub: <a href={PERSONAL_INFO.github} target="_blank" rel="noreferrer" className="text-sky-400 underline">{PERSONAL_INFO.github}</a></div>
             <div>LinkedIn: <a href={PERSONAL_INFO.linkedin} target="_blank" rel="noreferrer" className="text-sky-400 underline">{PERSONAL_INFO.linkedin}</a></div>
+            <div>LeetCode: <a href={PERSONAL_INFO.leetcode} target="_blank" rel="noreferrer" className="text-sky-400 underline">{PERSONAL_INFO.leetcode}</a></div>
           </div>
         );
         break;
@@ -186,6 +187,15 @@ export const TerminalContact: React.FC = () => {
           >
             <GithubIcon className="w-3.5 h-3.5 flex-shrink-0" />
             <span>GitHub</span>
+          </a>
+          <a
+            href={PERSONAL_INFO.leetcode}
+            target="_blank"
+            rel="noreferrer"
+            className="px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-mono-code text-slate-200 hover:text-sky-300 active:scale-95 transition-all flex items-center justify-center gap-2"
+          >
+            <LeetCodeIcon className="w-3.5 h-3.5 flex-shrink-0" />
+            <span>LeetCode</span>
           </a>
           <a
             href={PERSONAL_INFO.resumePdf}

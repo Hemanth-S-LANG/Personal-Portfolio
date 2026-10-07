@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FileText, ArrowUp } from 'lucide-react';
 import { PERSONAL_INFO } from '../../data/portfolioData';
-import { GithubIcon, LinkedinIcon } from './Icons';
+import { GithubIcon, LinkedinIcon, LeetCodeIcon } from './Icons';
 import { FooterCanvas } from '../3d/FooterCanvas';
 
 export const Footer: React.FC = () => {
@@ -74,6 +74,15 @@ export const Footer: React.FC = () => {
             className="p-3 rounded-full bg-white/5 border border-white/10 text-slate-300 hover:text-sky-400 hover:border-sky-500/30 active:scale-95 transition-all"
           >
             <LinkedinIcon className="w-4 h-4" />
+          </a>
+          <a
+            href={PERSONAL_INFO.leetcode}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="LeetCode Profile"
+            className="p-3 rounded-full bg-white/5 border border-white/10 text-slate-300 hover:text-sky-400 hover:border-sky-500/30 active:scale-95 transition-all"
+          >
+            <LeetCodeIcon className="w-4 h-4" />
           </a>
           <a
             href={PERSONAL_INFO.resumePdf}

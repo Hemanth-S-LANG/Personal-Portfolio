@@ -9,7 +9,7 @@ export const PERSONAL_INFO = {
   email: 'hs6384013@gmail.com',
   github: 'https://github.com/Hemanth-S-LANG',
   linkedin: 'https://www.linkedin.com/in/hemanth-s-685296318',
-  leetcode: 'https://leetcode.com/u/Hemanth_S/',
+  leetcode: 'https://leetcode.com/u/Hemanth_S137/',
   cgpa: '9.43 / 10',
   college: 'RNS Institute of Technology',
   degree: 'B.E. in Computer Science and Engineering (2024 – 2028)',
@@ -383,7 +383,7 @@ export const ACHIEVEMENTS: AchievementItem[] = [
     description: 'Solved 250+ algorithmic problems on LeetCode and 50+ on HackerRank with deep focus on Data Structures & Algorithms (Trees, Graphs, Dynamic Programming, Heap, System Design).',
     highlight: '250+ LeetCode / 50+ HackerRank',
     category: 'Competitive Programming',
-    link: 'https://leetcode.com/u/Hemanth_S/'
+    link: 'https://leetcode.com/u/Hemanth_S137/'
   },
   {
     title: 'BigO DSA Club Member',

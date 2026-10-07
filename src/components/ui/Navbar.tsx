@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Terminal, FileText, Menu, X } from 'lucide-react';
 import { PERSONAL_INFO } from '../../data/portfolioData';
-import { GithubIcon, LinkedinIcon } from './Icons';
+import { GithubIcon, LinkedinIcon, LeetCodeIcon } from './Icons';
 
 const NAV_ITEMS = [
   { id: 'hero', label: 'Home' },
@@ -114,6 +114,15 @@ export const Navbar: React.FC = () => {
             <LinkedinIcon className="w-4 h-4" />
           </a>
           <a
+            href={PERSONAL_INFO.leetcode}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="LeetCode Profile"
+            className="p-2.5 rounded-full glass-panel hover:text-cyan-400 border-white/10 hover:border-cyan-500/40 text-slate-300 transition-all"
+          >
+            <LeetCodeIcon className="w-4 h-4" />
+          </a>
+          <a
             href={PERSONAL_INFO.resumePdf}
             download="Hemanth_S_Resume.pdf"
             target="_blank"
@@ -207,6 +216,15 @@ export const Navbar: React.FC = () => {
                       className="p-3 rounded-2xl bg-white/5 border border-white/10 text-slate-300 hover:text-cyan-400 active:scale-95"
                     >
                       <LinkedinIcon className="w-4 h-4" />
+                    </a>
+                    <a
+                      href={PERSONAL_INFO.leetcode}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label="LeetCode Profile"
+                      className="p-3 rounded-2xl bg-white/5 border border-white/10 text-slate-300 hover:text-cyan-400 active:scale-95"
+                    >
+                      <LeetCodeIcon className="w-4 h-4" />
                     </a>
                   </div>
 
