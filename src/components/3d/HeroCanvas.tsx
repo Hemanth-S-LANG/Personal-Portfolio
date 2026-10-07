@@ -1,47 +1,80 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
+
+const isWebGLSupported = (): boolean => {
+  try {
+    const canvas = document.createElement('canvas');
+    return !!(
+      window.WebGLRenderingContext &&
+      (canvas.getContext('webgl2') || canvas.getContext('webgl'))
+    );
+  } catch {
+    return false;
+  }
+};
 
 export const HeroCanvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [webGlAvailable, setWebGlAvailable] = useState<boolean>(true);
 
   useEffect(() => {
-    if (!canvasRef.current || !containerRef.current) return;
+    if (!isWebGLSupported()) {
+      setWebGlAvailable(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!webGlAvailable || !canvasRef.current || !containerRef.current) return;
 
     const container = containerRef.current;
     const canvas = canvasRef.current;
 
-    let renderer: THREE.WebGLRenderer;
+    let renderer: THREE.WebGLRenderer | null = null;
+
+    // Responsive check for mobile GPU optimization
+    const isMobile = window.innerWidth < 768 || 'ontouchstart' in window;
+    const dpr = isMobile ? Math.min(window.devicePixelRatio, 1.25) : Math.min(window.devicePixelRatio, 2);
+
     try {
       renderer = new THREE.WebGLRenderer({
         canvas,
-        antialias: true,
+        antialias: !isMobile,
         alpha: true,
-        powerPreference: 'high-performance'
+        powerPreference: isMobile ? 'default' : 'high-performance'
       });
     } catch {
-      return;
+      try {
+        renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true });
+      } catch {
+        setWebGlAvailable(false);
+        return;
+      }
     }
 
-    const dpr = Math.min(window.devicePixelRatio, 2);
+    const handleContextLost = (e: Event) => {
+      e.preventDefault();
+      setWebGlAvailable(false);
+    };
+
+    canvas.addEventListener('webglcontextlost', handleContextLost, false);
+
+    let width = container.clientWidth || window.innerWidth;
+    let height = container.clientHeight || window.innerHeight;
+    if (height === 0) height = 1;
+
     renderer.setPixelRatio(dpr);
-    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setSize(width, height);
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(
-      45,
-      container.clientWidth / container.clientHeight,
-      0.1,
-      100
-    );
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
     camera.position.set(0, 0, 7);
 
     const group = new THREE.Group();
     scene.add(group);
 
-    // Responsive particle count: smooth 60fps across laptop & phone
-    const isMobile = window.innerWidth < 768;
-    const particleCount = isMobile ? 1400 : 2400;
+    // Optimized particle counts: high FPS & zero GPU memory pressure on mobile
+    const particleCount = isMobile ? 900 : 2200;
 
     // --- 1. CORE PARTICLES SPHERE ---
     const sphereRadius = 2.0;
@@ -82,7 +115,7 @@ export const HeroCanvas: React.FC = () => {
       sphereColors[i * 3 + 1] = c.g;
       sphereColors[i * 3 + 2] = c.b;
 
-      sphereSizes[i] = Math.random() * 3.5 + 1.5;
+      sphereSizes[i] = Math.random() * 3.0 + 1.2;
     }
 
     const sphereGeometry = new THREE.BufferGeometry();
@@ -91,7 +124,7 @@ export const HeroCanvas: React.FC = () => {
     sphereGeometry.setAttribute('aSize', new THREE.BufferAttribute(sphereSizes, 1));
     sphereGeometry.setAttribute('aRandom', new THREE.BufferAttribute(sphereRandoms, 3));
 
-    // Shader Material for Core Sphere
+    // Shader Material with Strict Point Size Clamping to Prevent Mobile WebGL White-out Glitches
     const sphereMaterial = new THREE.ShaderMaterial({
       uniforms: {
         uTime: { value: 0 },
@@ -120,10 +153,15 @@ export const HeroCanvas: React.FC = () => {
           pos += aRandom * force * 0.3;
 
           vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
-          gl_PointSize = aSize * uDpr * (4.5 / -mvPosition.z);
+          
+          float safeZ = max(-mvPosition.z, 0.1);
+          float rawPointSize = aSize * uDpr * (4.5 / safeZ);
+          
+          // Clamp point size strictly to mobile GPU hardware limits (max 64.0px)
+          gl_PointSize = clamp(rawPointSize, 1.0, 64.0);
+          
           gl_Position = projectionMatrix * mvPosition;
-
-          vAlpha = smoothstep(0.0, 1.5, -mvPosition.z);
+          vAlpha = smoothstep(0.0, 1.5, safeZ);
         }
       `,
       fragmentShader: `
@@ -160,7 +198,7 @@ export const HeroCanvas: React.FC = () => {
       ringGeo.setAttribute('position', new THREE.BufferAttribute(ringPositions, 3));
       const ringMat = new THREE.PointsMaterial({
         color: new THREE.Color(colorHex),
-        size: 0.035,
+        size: isMobile ? 0.04 : 0.035,
         transparent: true,
         opacity: 0.6,
         blending: THREE.AdditiveBlending
@@ -171,13 +209,13 @@ export const HeroCanvas: React.FC = () => {
       return ringPoints;
     };
 
-    const ring1 = createRing(2.8, isMobile ? 300 : 400, Math.PI / 4, 0, '#00F0FF');
-    const ring2 = createRing(3.4, isMobile ? 400 : 600, -Math.PI / 3, Math.PI / 6, '#7A3CFF');
+    const ring1 = createRing(2.8, isMobile ? 220 : 400, Math.PI / 4, 0, '#00F0FF');
+    const ring2 = createRing(3.4, isMobile ? 280 : 600, -Math.PI / 3, Math.PI / 6, '#7A3CFF');
     group.add(ring1);
     group.add(ring2);
 
     // --- 3. BACKGROUND PARTICLES ---
-    const bgCount = isMobile ? 300 : 500;
+    const bgCount = isMobile ? 180 : 400;
     const bgGeo = new THREE.BufferGeometry();
     const bgPos = new Float32Array(bgCount * 3);
     for (let i = 0; i < bgCount * 3; i += 3) {
@@ -199,9 +237,12 @@ export const HeroCanvas: React.FC = () => {
     const mouse = { x: 0, y: 0, targetX: 0, targetY: 0 };
 
     const updateCoords = (clientX: number, clientY: number) => {
-      const rect = container.getBoundingClientRect();
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      if (rect.width <= 0 || rect.height <= 0) return; // Prevent NaN calculation
       const x = ((clientX - rect.left) / rect.width) * 2 - 1;
       const y = -(((clientY - rect.top) / rect.height) * 2 - 1);
+      if (isNaN(x) || isNaN(y)) return; // Strict safety check
       mouse.targetX = x;
       mouse.targetY = y;
     };
@@ -221,22 +262,35 @@ export const HeroCanvas: React.FC = () => {
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
 
     const handleResize = () => {
-      if (!containerRef.current) return;
-      const width = containerRef.current.clientWidth;
-      const height = containerRef.current.clientHeight;
-      camera.aspect = width / height;
+      if (!containerRef.current || !renderer) return;
+      const w = containerRef.current.clientWidth || window.innerWidth;
+      const h = containerRef.current.clientHeight || window.innerHeight;
+      if (w <= 0 || h <= 0) return;
+      camera.aspect = w / h;
       camera.updateProjectionMatrix();
-      renderer.setSize(width, height);
-      sphereMaterial.uniforms.uDpr.value = Math.min(window.devicePixelRatio, 2);
+      renderer.setSize(w, h);
+      sphereMaterial.uniforms.uDpr.value = dpr;
     };
 
     window.addEventListener('resize', handleResize);
+
+    // Pause animation when hero section is not visible
+    let isVisible = true;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(container);
 
     let animationFrameId: number;
     let clock = new THREE.Clock();
 
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
+
+      if (!isVisible) return; // Save GPU cycle when scrolled past hero
 
       const elapsedTime = clock.getElapsedTime();
 
@@ -261,21 +315,23 @@ export const HeroCanvas: React.FC = () => {
 
     return () => {
       cancelAnimationFrame(animationFrameId);
+      observer.disconnect();
+      canvas.removeEventListener('webglcontextlost', handleContextLost);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('touchstart', handleTouchMove);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('resize', handleResize);
-      renderer.dispose();
+      if (renderer) {
+        renderer.dispose();
+      }
       sphereGeometry.dispose();
       sphereMaterial.dispose();
     };
-  }, []);
+  }, [webGlAvailable]);
 
   return (
-    <div ref={containerRef} className="absolute inset-0 w-full h-full pointer-events-none z-0">
-      <canvas ref={canvasRef} className="w-full h-full block" />
+    <div ref={containerRef} className="absolute inset-0 w-full h-full pointer-events-none z-0 bg-transparent">
+      {webGlAvailable && <canvas ref={canvasRef} className="w-full h-full block" />}
     </div>
   );
 };
-
-

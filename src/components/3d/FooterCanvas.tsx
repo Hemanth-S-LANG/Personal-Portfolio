@@ -127,7 +127,9 @@ export const FooterCanvas: React.FC = () => {
           pos.y += push * 0.8;
 
           vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
-          gl_PointSize = aSize * uDpr * (3.5 / -mvPosition.z);
+          float safeZ = max(-mvPosition.z, 0.1);
+          float rawPointSize = aSize * uDpr * (3.5 / safeZ);
+          gl_PointSize = clamp(rawPointSize, 1.0, 64.0);
           gl_Position = projectionMatrix * mvPosition;
         }
       `,
@@ -172,9 +174,12 @@ export const FooterCanvas: React.FC = () => {
     const mouse = { x: 0, y: 0, targetX: 0, targetY: 0 };
 
     const updateCoords = (clientX: number, clientY: number) => {
-      const rect = container.getBoundingClientRect();
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      if (rect.width <= 0 || rect.height <= 0) return;
       const x = ((clientX - rect.left) / rect.width) * 2 - 1;
       const y = -(((clientY - rect.top) / rect.height) * 2 - 1);
+      if (isNaN(x) || isNaN(y)) return;
       mouse.targetX = x;
       mouse.targetY = y;
     };
